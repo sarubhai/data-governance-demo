@@ -7,11 +7,11 @@ This repository contains the source code for Data Governance demo, for COVID Vac
 
 - Clone the repository:
 ```
-git clone https://github.com/sarubhai/dg-demo.git
+git clone https://github.com/sarubhai/data-governance-demo.git
 ```
 - Installation:
 ```
-cd dg-demo
+cd data-governance-demo
 docker compose -f docker-compose.yml up -d
 ```
 Wait for some time for all the containers to be ready
