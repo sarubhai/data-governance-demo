@@ -1,0 +1,18 @@
+pipeline_name: dbt_postgres
+source:
+  type: dbt
+  config:
+    catalog_path: "/datahub-ingestion/dbt/catalog.json"
+    manifest_path: "/datahub-ingestion/dbt/manifest.json"
+    test_results_path: "/datahub-ingestion/dbt/run_results.json"
+    # sources_path: "/datahub-ingestion/dbt/sources.json"
+    target_platform: "postgres"
+
+    stateful_ingestion:
+      enabled: True
+      remove_stale_metadata: True
+
+sink:
+  type: "datahub-rest"
+  config:
+    server: "http://datahub-gms:8080"

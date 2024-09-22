@@ -1,0 +1,11 @@
+demo_profile:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: postgres
+      user: postgres
+      password: P@ssw0rd!234
+      port: 5432
+      dbname: postgres
+      schema: model

@@ -1,0 +1,183 @@
+version: 2
+
+models:
+  - name: covid_vaccination
+    description: "Curated Dataset of US COVID-19 vaccinations"
+    config:
+      contract:
+        enforced: true
+      meta:
+        contains_pii: false
+        owner: "@saurav.mitra"
+      tags:
+        - covid
+        - vaccination
+    data_tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source("src_stage", "stg_covid_vaccination")
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: total_vaccinations
+          column_B: people_vaccinated
+          or_equal: True
+    columns:
+      - name: location
+        description: "Name of the state or federal entity"
+        data_type: text
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+      - name: date
+        description: "Date of the observation"
+        data_type: date
+        constraints:
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+      - name: vaccine
+        description: "List of vaccines administered"
+        data_type: text
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+          - valid_vaccines
+      - name: source_url
+        description: "Web location of public official source data"
+        data_type: text
+        constraints:
+          - type: not_null
+        data_tests:
+          - not_null
+      - name: total_vaccinations
+        description: "Total number of doses administered"
+        data_type: int
+        data_tests:
+          - not_null
+          - cummulative_count:
+              order_column_name: date
+      - name: people_vaccinated
+        description: "Total number of people who received at least one vaccine dose"
+        data_type: int
+        data_tests:
+          - not_null
+          - cummulative_count:
+              order_column_name: date
+      - name: people_fully_vaccinated
+        description: "Total number of people who received all doses"
+        data_type: int
+        data_tests:
+          - not_null
+      - name: total_boosters
+        description: "Total number of COVID-19 vaccination booster doses administered"
+        data_type: int
+
+
+  - name: dim_date
+    description: "Date Dimension"
+    config:
+      contract:
+        enforced: true
+      meta:
+        contains_pii: false
+        owner: "@saurav.mitra"
+      tags:
+        - dimension
+    columns:
+      - name: date_key
+        description: "An integer representing the date in the format YYYYMMDD, which acts as a surrogate key for the date"
+        data_type: int
+        constraints:
+          - type: unique
+          - type: not_null
+      - name: date
+        description: "Calender date"
+        data_type: date
+        constraints:
+          - type: unique
+          - type: not_null
+        data_tests:
+          - unique
+          - not_null
+      - name: year
+        description: "The year number as an integer"
+        data_type: int
+        constraints:
+          - type: not_null
+      - name: month_number
+        description: "The month number as an integer"
+        data_type: int
+        constraints:
+          - type: not_null
+      - name: month_key
+        description: "An integer representing the year and month in the format YYYYMM, used as a surrogate key for the month"
+        data_type: int
+        constraints:
+          - type: not_null
+      - name: month_name
+        description: "The full name of the month"
+        data_type: text
+        constraints:
+          - type: not_null
+      - name: quarter
+        description: "The quarter of the year as an integer"
+        data_type: int
+        constraints:
+          - type: not_null
+      - name: week_of_year
+        description: "The week number of the year based on the ISO week date system"
+        data_type: int
+        constraints:
+          - type: not_null
+      - name: day_of_week_iso
+        description: "The ISO day of the week number"
+        data_type: int
+        constraints:
+          - type: not_null
+      - name: day_name
+        description: "The full name of the day"
+        data_type: text
+        constraints:
+          - type: not_null
+      - name: day_of_month
+        description: "The day of the month as an integer"
+        data_type: int
+        constraints:
+          - type: not_null
+      - name: day_of_year
+        description: "The day of the year as an integer"
+        data_type: int
+        constraints:
+          - type: not_null
+      - name: is_weekend
+        description: "A boolean indicating whether the date falls on a weekend"
+        data_type: boolean
+        constraints:
+          - type: not_null
+      - name: iso_date_format
+        description: "The date formatted in ISO standard (YYYY-MM-DD)"
+        data_type: text
+        constraints:
+          - type: not_null
+      - name: week_start_date
+        description: "The starting date of the week (Monday) for the given date"
+        data_type: date
+        constraints:
+          - type: not_null
+      - name: month_start_date
+        description: "The starting date of the month for the given date"
+        data_type: date
+        constraints:
+          - type: not_null
+      - name: quarter_start_date
+        description: "The starting date of the quarter for the given date"
+        data_type: date
+        constraints:
+          - type: not_null
+      - name: year_start_date
+        description: "The starting date of the year for the given date"
+        data_type: date
+        constraints:
+          - type: not_null

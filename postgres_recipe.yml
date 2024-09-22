@@ -1,0 +1,26 @@
+pipeline_name: dw_postgres
+source:
+  type: postgres
+  config:
+    host_port: postgres:5432
+    username: postgres
+    password: P@ssw0rd!234
+    database: postgres
+    schema_pattern:
+      allow:
+        - stage
+        - model
+    include_tables: True
+    include_views: True
+    profiling:
+      enabled: True
+      profile_table_level_only: False
+    
+    stateful_ingestion:
+      enabled: True
+      remove_stale_metadata: True
+
+sink:
+  type: "datahub-rest"
+  config:
+    server: "http://datahub-gms:8080"

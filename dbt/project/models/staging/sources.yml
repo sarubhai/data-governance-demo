@@ -1,0 +1,47 @@
+version: 2
+
+sources:
+  - name: src_stage
+    description: "Staging Database"
+    loader: python
+    database: postgres
+    schema: stage
+    meta:
+      contains_test_data: false
+      owner: "@saurav.mitra"
+    tags:
+      - demo
+      - staging
+    freshness:
+      warn_after: {count: 12, period: hour}
+      error_after: {count: 24, period: hour}
+
+    tables:
+      - name: stg_covid_vaccination
+        columns:
+          - name: location
+            data_tests:
+              - not_null
+          - name: date
+            data_tests:
+              - unique
+              - not_null
+              - dbt_expectations.expect_column_value_lengths_to_equal:
+                  value: 10
+          - name: vaccine
+            data_tests:
+              - not_null
+              - valid_vaccines
+          - name: source_url
+            data_tests:
+              - not_null
+          - name: total_vaccinations
+            data_tests:
+              - not_null
+          - name: people_vaccinated
+            data_tests:
+              - not_null
+          - name: people_fully_vaccinated
+            data_tests:
+              - not_null
+          - name: total_boosters
